@@ -1,11 +1,7 @@
 # Homepage (Root path)
-VALID_USERS = {
-  rich: "luna",
-  bev: "love",
-  derrick: "jd"
-}
 
 before do
+  @current_user = User.find(session[:id]) if session[:id]
   erb :login
 end
 
@@ -25,8 +21,9 @@ end
 
 # Get login input from users
 post '/login' do
-  if VALID_USERS[params["email"].to_sym] == params["password"]
-    session[:email] = params[:email]
+    user = User.find_by(email: params[:email])
+    if user.password == params[:password]
+      session[:id] = user.id
     redirect '/'
   else
     redirect '/'
